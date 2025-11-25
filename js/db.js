@@ -10,13 +10,13 @@ class Database {
         try {
             // Firebase configuration
             const firebaseConfig = {
-                apiKey: "AIzaSyAtIjjQYwulJ1RxEOpkBZjhBbC2GyyGmw0",
-                authDomain: "fdfdff-ae786.firebaseapp.com",
-                projectId: "fdfdff-ae786",
-                storageBucket: "fdfdff-ae786.firebasestorage.app",
-                messagingSenderId: "853545168640",
-                appId: "1:853545168640:web:1ef0f66135672d9ab9cde5",
-                measurementId: "G-FBJ7JPXMHT"
+                apiKey: "AIzaSyCS4tcI_-GdEF6toYG-QKHj3AWETrhBhmc",
+                authDomain: "prgst-f9b07.firebaseapp.com",
+                projectId: "prgst-f9b07",
+                storageBucket: "prgst-f9b07.firebasestorage.app",
+                messagingSenderId: "643004497148",
+                appId: "1:643004497148:web:37d9883d9a9a0fdab56b79",
+                measurementId: "G-DJLVG9YVBK"
             };
 
             // Initialize Firebase
@@ -331,87 +331,87 @@ class Database {
         }
     }
 
-async restoreFromRecycleBin(originalId, type) {
-    try {
-        const db = await this.waitForInit();
-        console.log('Looking for item in recycle bin with original ID:', originalId);
+    async restoreFromRecycleBin(originalId, type) {
+        try {
+            const db = await this.waitForInit();
+            console.log('Looking for item in recycle bin with original ID:', originalId);
 
-        // Search for the item by its original ID in the recycle bin collection
-        const snapshot = await db.collection('recycleBin')
-            .where('id', '==', originalId)
-            .limit(1)
-            .get();
+            // Search for the item by its original ID in the recycle bin collection
+            const snapshot = await db.collection('recycleBin')
+                .where('id', '==', originalId)
+                .limit(1)
+                .get();
 
-        if (snapshot.empty) {
-            console.error('Item not found in recycle bin with original ID:', originalId);
-            throw new Error("Item not found in recycle bin");
+            if (snapshot.empty) {
+                console.error('Item not found in recycle bin with original ID:', originalId);
+                throw new Error("Item not found in recycle bin");
+            }
+
+            const itemDoc = snapshot.docs[0];
+            const recycleBinId = itemDoc.id; // This is the Firestore document ID in recycleBin collection
+            const item = itemDoc.data();
+
+            console.log('Found item in recycle bin:', item);
+
+            // Remove Firebase-specific fields and the recycle bin specific fields
+            const {
+                type: itemType,
+                id: docId,
+                deletedAt,
+                ...itemData
+            } = item;
+
+            console.log('Cleaned item data for restoration:', itemData);
+
+            // Restore to appropriate collection
+            switch (type || itemType) {
+                case 'customer':
+                    await this.addCustomer(itemData);
+                    break;
+                case 'invoice':
+                    await this.addInvoice(itemData);
+                    break;
+                case 'product':
+                    await this.addProduct(itemData);
+                    break;
+                default:
+                    throw new Error("Unknown item type: " + (type || itemType));
+            }
+
+            // Remove from recycle bin using the Firestore document ID
+            await db.collection('recycleBin').doc(recycleBinId).delete();
+            console.log('Item successfully restored and removed from recycle bin');
+            return true;
+        } catch (error) {
+            console.error("Error restoring from recycle bin:", error);
+            throw error;
         }
-
-        const itemDoc = snapshot.docs[0];
-        const recycleBinId = itemDoc.id; // This is the Firestore document ID in recycleBin collection
-        const item = itemDoc.data();
-        
-        console.log('Found item in recycle bin:', item);
-
-        // Remove Firebase-specific fields and the recycle bin specific fields
-        const {
-            type: itemType,
-            id: docId,
-            deletedAt,
-            ...itemData
-        } = item;
-
-        console.log('Cleaned item data for restoration:', itemData);
-
-        // Restore to appropriate collection
-        switch (type || itemType) {
-            case 'customer':
-                await this.addCustomer(itemData);
-                break;
-            case 'invoice':
-                await this.addInvoice(itemData);
-                break;
-            case 'product':
-                await this.addProduct(itemData);
-                break;
-            default:
-                throw new Error("Unknown item type: " + (type || itemType));
-        }
-
-        // Remove from recycle bin using the Firestore document ID
-        await db.collection('recycleBin').doc(recycleBinId).delete();
-        console.log('Item successfully restored and removed from recycle bin');
-        return true;
-    } catch (error) {
-        console.error("Error restoring from recycle bin:", error);
-        throw error;
     }
-}
-async permanentDeleteFromRecycleBin(originalId) {
-    try {
-        const db = await this.waitForInit();
-        console.log('Permanently deleting item from recycle bin with original ID:', originalId);
+    async permanentDeleteFromRecycleBin(originalId) {
+        try {
+            const db = await this.waitForInit();
+            console.log('Permanently deleting item from recycle bin with original ID:', originalId);
 
-        // Search for the item by its original ID
-        const snapshot = await db.collection('recycleBin')
-            .where('id', '==', originalId)
-            .limit(1)
-            .get();
+            // Search for the item by its original ID
+            const snapshot = await db.collection('recycleBin')
+                .where('id', '==', originalId)
+                .limit(1)
+                .get();
 
-        if (snapshot.empty) {
-            console.error('Item not found in recycle bin for deletion:', originalId);
-            throw new Error("Item not found in recycle bin");
+            if (snapshot.empty) {
+                console.error('Item not found in recycle bin for deletion:', originalId);
+                throw new Error("Item not found in recycle bin");
+            }
+
+            const itemDoc = snapshot.docs[0];
+            await db.collection('recycleBin').doc(itemDoc.id).delete();
+            console.log('Item permanently deleted from recycle bin');
+            return true;
+        } catch (error) {
+            console.error("Error permanently deleting from recycle bin:", error);
+            throw error;
         }
-
-        const itemDoc = snapshot.docs[0];
-        await db.collection('recycleBin').doc(itemDoc.id).delete();
-        console.log('Item permanently deleted from recycle bin');
-        return true;
-    } catch (error) {
-        console.error("Error permanently deleting from recycle bin:", error);
-        throw error;
     }
-}
 
     // Settings operations
     async saveSettings(settings) {

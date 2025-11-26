@@ -1,5 +1,3 @@
-/* styles.css */
-
 /* --- GENERAL STYLES AND VARIABLES (Consistent across all pages) --- */
 :root {
     --primary-color: #343a40; /* Blue for primary actions/branding */
@@ -127,7 +125,7 @@ body {
 }
 
 .dashboard {
-    background-color:  #0056b3;
+    background-color: 	#0056b3;
     font-weight: 600;
     color: var(--bg-white);
 }
@@ -857,5 +855,60 @@ body {
     
     .calculation-section {
         flex-direction: column;
+    }
+}
+
+/* styles.css (Modify the existing spinner section) */
+
+/* --- LOADING SPINNER STYLES (Professional Update) --- */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Dark, semi-transparent background for focus */
+    background: rgba(0, 0, 0, 0.7); 
+    z-index: 10000; 
+    display: none; 
+    justify-content: center;
+    align-items: center;
+}
+
+.spinner-container {
+    text-align: center;
+    padding: 30px 40px;
+    background: var(--bg-white); /* White background for the card */
+    color: var(--text-dark);
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.spinner-container p {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-top: 15px;
+    letter-spacing: 0.5px;
+}
+
+/* The Animated Loader Ring */
+.loader {
+    width: 50px;
+    height: 50px;
+    border: 5px solid var(--border-light); /* Light base ring */
+    border-top-color: var(--primary-color); /* Primary color for the moving part */
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite; /* Apply rotation animation */
+}
+
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
     }
 }

@@ -502,8 +502,3 @@ async function resetForm() {
     }
 }
 
-// PDF generation function (you'll need to implement this based on your PDF library)
-function generatePDF() {
-    // Your PDF generation code here
-    alert('PDF generation functionality to be implemented');
-}

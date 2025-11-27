@@ -428,6 +428,65 @@ class Database {
         }
     }
 
+
+    // --- Start of new method to add to the Database class in db.js ---
+
+    // Utility for one-time cleanup
+    async cleanupDuplicates() {
+        console.log("Starting duplicate cleanup...");
+        const db = await this.waitForInit();
+
+        // 1. Fetch all customer documents
+        const snapshot = await db.collection('customers')
+            .orderBy('createdAt', 'desc') // Sort by creation time to easily keep the newest
+            .get();
+
+        const customersByPhone = {};
+        const batch = db.batch();
+        let deletedCount = 0;
+
+        // 2. Group customers by phone number
+        snapshot.docs.forEach(doc => {
+            const data = doc.data();
+            const phone = data.phone;
+
+            if (!customersByPhone[phone]) {
+                customersByPhone[phone] = [];
+            }
+            customersByPhone[phone].push({ id: doc.id, ...data, docRef: doc.ref });
+        });
+
+        // 3. Process groups to mark duplicates for deletion
+        for (const phone in customersByPhone) {
+            const duplicates = customersByPhone[phone];
+
+            if (duplicates.length > 1) {
+                console.warn(`Found ${duplicates.length} duplicates for phone: ${phone}. Keeping the newest.`);
+
+                // Since we fetched and sorted by 'createdAt' DESC, the first one is the newest/primary to keep.
+
+                // Start deletion from the second element (index 1)
+                for (let i = 1; i < duplicates.length; i++) {
+                    const docToDelete = duplicates[i];
+                    // Add delete operation to the batch
+                    batch.delete(docToDelete.docRef);
+                    deletedCount++;
+                }
+            }
+        }
+
+        // 4. Commit the batch deletion
+        if (deletedCount > 0) {
+            await batch.commit();
+            console.log(`Cleanup successful. Total duplicates deleted: ${deletedCount}`);
+            return { success: true, count: deletedCount };
+        } else {
+            console.log("Cleanup complete. No duplicates found to delete.");
+            return { success: false, count: 0 };
+        }
+    }
+    // --- End of new method to add to the Database class in db.js ---
+
     async getSettings() {
         try {
             const db = await this.waitForInit();

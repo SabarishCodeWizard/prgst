@@ -590,6 +590,59 @@ body {
     animation: toastSlideIn 0.3s ease-out;
 }
 
+
+/* Styling for the Cleanup Duplicates Button (.btn-secondary) */
+
+/* General button styling */
+.btn-secondary {
+    padding: 10px 15px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none; /* In case it's used as an anchor */
+}
+
+/* Secondary Button Specific Look (Blue/Gray for cleanup action) */
+.btn-secondary {
+    /* Muted Blue/Gray for a secondary or utility action */
+    background-color: #6c757d; /* Standard Bootstrap secondary color */
+    color: white;
+    border: 1px solid #6c757d;
+}
+
+/* Hover and Active states */
+.btn-secondary:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Disabled state */
+.btn-secondary:disabled {
+    background-color: #999;
+    border-color: #999;
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Icon spacing */
+.btn-secondary i {
+    margin-right: 8px;
+    font-size: 14px;
+}
+
+/* Inline style override for margin */
+/* The inline style `style="margin-right: 10px;"` handles the spacing for this specific button. */
+
+
 @keyframes toastSlideIn {
     from {
         opacity: 0;

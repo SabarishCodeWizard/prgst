@@ -14,12 +14,19 @@ function setupEventListeners() {
         searchCustomer.addEventListener('input', loadCustomers);
     }
 
-    // Add customer button
+// Add customer button
     const addCustomerBtn = document.getElementById('addCustomerBtn');
     if (addCustomerBtn) {
         addCustomerBtn.addEventListener('click', function () {
             openCustomerModal();
         });
+    }
+
+
+    // Cleanup Duplicates button
+    const cleanupBtn = document.getElementById('cleanupDuplicatesBtn');
+    if (cleanupBtn) {
+        cleanupBtn.addEventListener('click', handleCleanupDuplicates);
     }
 
     // Customer form submission
@@ -150,6 +157,42 @@ async function loadCustomers() {
         showSuccessModal('Error', 'Error loading customers. Please try again.', 'error');
     }
 }
+
+// --- Add this new function in customer-details.js: ---
+
+async function handleCleanupDuplicates() {
+    if (!confirm("Are you sure you want to run the database cleanup? This will permanently delete old duplicate customer records, keeping only the newest one based on creation date.")) {
+        return;
+    }
+
+    // Temporarily disable the button
+    const cleanupBtn = document.getElementById('cleanupDuplicatesBtn');
+    if (cleanupBtn) {
+        cleanupBtn.disabled = true;
+        cleanupBtn.textContent = 'Cleaning up...';
+    }
+
+    try {
+        const result = await db.cleanupDuplicates();
+        loadCustomers(); // Reload list to reflect changes
+
+        if (result.success) {
+            showSuccessToast(`Database cleaned! ${result.count} duplicate customer records were deleted.`, 'success');
+        } else {
+            showSuccessToast('Cleanup ran successfully. No duplicates were found.', 'info');
+        }
+    } catch (error) {
+        console.error("Error during cleanup:", error);
+        showSuccessToast('Error during cleanup. Check console for details.', 'error');
+    } finally {
+        // Re-enable the button
+        if (cleanupBtn) {
+            cleanupBtn.disabled = false;
+            cleanupBtn.textContent = 'Cleanup Duplicates';
+        }
+    }
+}
+// ---
 
 function displayCustomers(customers) {
     const customerList = document.getElementById('customerList');

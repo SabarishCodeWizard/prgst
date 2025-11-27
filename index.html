@@ -8,8 +8,13 @@
     <link rel="stylesheet" href="css/styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script>
         // Check if user is logged in
         if (sessionStorage.getItem('isLoggedIn') !== 'true') {
@@ -22,7 +27,7 @@
     <div class="container">
         <div class="controls">
             <h1 class="bill-system-header">
-                <a href="#" class="brand-name">Sabarish</a>
+                <a href="#" class="brand-name">PR FABRICS</a>
                 <span class="system-name">Accounting Software</span>
             </h1>
             <a href="index.html" class="dashboard active">
@@ -74,16 +79,16 @@
                         <p>GSTIN: 33CLJPG4331G1ZG</p>
                     </div>
 
-                     <!-- Add this after the calculation-section div and before the bank-details div -->
+                    <!-- Add this after the calculation-section div and before the bank-details div -->
                     <div class="invoice-suggestions">
                         <div class="suggestion-content">
                             <div class="suggestion-row">
                                 <div class="suggestion-item">
-                                    <label>Last Invoice Number:</label>
+                                    <label>Last Invoice:</label>
                                     <span id="lastInvoiceNumber">--</span>
                                 </div>
                                 <div class="suggestion-item">
-                                    <label>Next Suggested Number:</label>
+                                    <label>Next Suggested:</label>
                                     <span id="nextInvoiceNumber">--</span>
                                 </div>
                             </div>
@@ -235,7 +240,7 @@
                         </div>
                     </div>
 
-                   
+
 
                     <div class="bank-details">
                         <h3>Bank Details</h3>
@@ -250,7 +255,7 @@
                         <div class="bank-row">
                             <label>BANK A/C NO:</label>
                             <span>65631010003339
-</span>
+                            </span>
                         </div>
                         <div class="bank-row">
                             <label>BANK IFSC CODE:</label>

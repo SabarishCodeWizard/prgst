@@ -342,7 +342,7 @@ function generateInvoiceModalHTML(invoice) {
                 </div>
             </div>
             <div class="invoice-modal-footer">
-                <button class="btn-print" onclick="printInvoice('${invoice.id}')">Print</button>
+    
                 <button class="btn-close" onclick="closeInvoiceModal()">Close</button>
             </div>
         </div>

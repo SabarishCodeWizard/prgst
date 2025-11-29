@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         document.getElementById('cgstRate').value = 2.5;
         document.getElementById('sgstRate').value = 2.5;
         document.getElementById('igstRate').value = 0;
-        
+
         // Set default invoice number
         try {
             const nextInvoiceNumber = await db.getNextInvoiceNumber();
@@ -52,6 +52,8 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
     });
 
+    // New E-Way Bill Button Listener
+    document.getElementById('generateEwayBill').addEventListener('click', generateEwayBill);
     // Save customer details when form is filled
     document.getElementById('customerName').addEventListener('blur', saveCustomerDetails);
     document.getElementById('customerAddress').addEventListener('blur', saveCustomerDetails);
@@ -254,6 +256,38 @@ function applyInvoiceSuggestion() {
             suggestionElement.textContent = originalText;
             suggestionElement.style.color = '#e74c3c';
         }, 2000);
+    }
+}
+async function generateEwayBill() {
+    const gstin = '33CLJPG4331G1ZG'; // The GSTIN from the company details
+
+    try {
+        // 1. Copy GSTIN to the clipboard
+        await navigator.clipboard.writeText(gstin);
+
+        // Confirmation message for the user
+        const btn = document.getElementById('generateEwayBill');
+        const originalHtml = btn.innerHTML;
+
+        btn.innerHTML = '<i class="fas fa-clipboard-check"></i> GSTIN Copied!';
+        btn.style.background = '#27ae60';
+
+        setTimeout(() => {
+            btn.innerHTML = originalHtml;
+            btn.style.background = ''; // Reset background
+
+            // 2. Redirect to the e-Way Bill portal after a short delay
+            // This delay helps ensure the copy operation completes before the redirect.
+            window.open('https://ewaybillgst.gov.in/Login.aspx', '_blank');
+
+        }, 1000); // 1-second delay for confirmation and then redirect
+
+    } catch (err) {
+        console.error('Failed to copy text or redirect: ', err);
+        alert('Could not automatically copy GSTIN. Please copy it manually: ' + gstin);
+
+        // Open the portal even if copy failed
+        window.open('https://ewaybillgst.gov.in/Login.aspx', '_blank');
     }
 }
 
@@ -461,14 +495,14 @@ async function resetForm() {
                 input.value = '';
             }
         });
-        
+
         await initializeInvoiceSuggestions();
-        
+
         // Set default dates
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('invoiceDate').value = today;
         document.getElementById('supplyDate').value = today;
-        
+
         // Set default tax rates
         document.getElementById('cgstRate').value = 2.5;
         document.getElementById('sgstRate').value = 2.5;
